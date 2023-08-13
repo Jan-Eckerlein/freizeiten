@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Services\RequestService;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterUserRequest extends FormRequest
@@ -19,16 +20,16 @@ class RegisterUserRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
-    public function rules(): array
+    public function rules(RequestService $rs): array
     {
         return [
-            'username'  => ['string', 'required', 'unique:users'],
-            'first_name' => ['required', 'string'],
-            'last_name'  => ['required', 'string'],
-            'email'     => ['required', 'email', 'unique:users'],
-            'password'  => ['required', 'string', 'min:8', 'confirmed'],
-            'password_confirmation' => ['required', 'string', 'min:8'],
-            'device_name' => ['required', 'string', 'min:5', 'max:255', 'regex:/^[a-zA-Z0-9_.-]*$/']
+            'username'              => $rs->getRules()['username'],
+            'first_name'            => $rs->getRules()['first_name'],
+            'last_name'             => $rs->getRules()['last_name'],
+            'email'                 => $rs->getRules()['email'],
+            'password'              => $rs->getRules()['password'],
+            'password_confirmation' => $rs->getRules()['password_confirmation'],
+            'device_name'           => $rs->getRules()['device_name']
         ];
     }
 }
