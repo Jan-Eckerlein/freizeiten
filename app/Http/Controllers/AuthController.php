@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     /**
@@ -22,21 +23,35 @@ class AuthController extends Controller
         ]);
     }
 
-    // public function authenticate(Request $request): JsonResponse
-    // {
-    //     $credentials = $request->validate([
-    //         'email' => ['required', 'email'],
-    //         'password' => ['required'],
-    //     ]);
+    public function login(Request $request): JsonResponse
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
 
-    //     if (Auth::attempt($credentials)) {
-    //         $request->session()->regenerate();
+        if (Auth::attempt($credentials)) {
+            // $request->session()->regenerate();
+            return response()->json([
+                'message' => 'Successfully authenticated',
+                'email' => $request->email,
+            ]);
+        }
 
-    //         return redirect()->intended('dashboard');
-    //     }
+        return response()->json([
+            'message' => 'The provided credentials do not match our records.',
+        ], 422);
+    }
 
-    //     return back()->withErrors([
-    //         'email' => 'The provided credentials do not match our records.',
-    //     ])->onlyInput('email');
-    // }
+    public function check(): JsonResponse
+    {
+        return Auth::check()
+            ? response()->json([
+                'message' => 'User is logged in',
+                'email' => Auth::user()->email,
+            ])
+            : response()->json([
+                'message' => 'User is not logged in',
+            ], 422);
+    }
 }
