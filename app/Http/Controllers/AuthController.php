@@ -52,15 +52,15 @@ class AuthController extends Controller
     //     ], 422);
     // }
 
-    // public function check(): JsonResponse
-    // {
-    //     return Auth::check()
-    //         ? response()->json([
-    //             'message' => 'User is logged in',
-    //             'email' => Auth::user()->email,
-    //         ])
-    //         : response()->json([
-    //             'message' => 'User is not logged in',
-    //         ], 422);
-    // }
+    public function check(Request $request): JsonResponse
+    {
+        $currentToken = $request->user()->currentAccessToken();
+
+        return response()->json([
+            'message' => 'Authenticated',
+            'email' => Auth::user()->email,
+            'token_name' => $currentToken->name,
+            'token_abilities' => $currentToken->abilities,
+        ]);
+    }
 }
