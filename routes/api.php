@@ -18,14 +18,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:sanctum')->prefix('auth')->group(static function () {
-    Route::get('/check', [\App\Http\Controllers\AuthController::class, 'check']);
-    Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
-    Route::get('/tokens', [\App\Http\Controllers\AuthController::class, 'getTokens']);
-    Route::delete('/tokens/{id}', [\App\Http\Controllers\AuthController::class, 'deleteToken']);
-});
-
 Route::prefix('auth')->group(static function () {
     Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
     Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+
+    Route::middleware('auth:sanctum')->group(static function () {
+        Route::get('/check', [\App\Http\Controllers\AuthController::class, 'check']);
+        Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+        Route::get('/tokens', [\App\Http\Controllers\AuthController::class, 'getTokens']);
+        Route::delete('/tokens/{id}', [\App\Http\Controllers\AuthController::class, 'deleteToken']);
+    });
 });
