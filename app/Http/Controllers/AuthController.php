@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthRegisterRequest;
+use App\Http\Resources\TokenResource;
 use App\Http\Services\RequestService;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -25,12 +26,14 @@ class AuthController extends Controller
             'lastName'  => $validated->last_name,
         ]);
 
-        $token = $user->createToken($validated->device_name)->plainTextToken;
+        $plainTextToken = $user->createToken($validated->device_name)->plainTextToken;
+        $token = TokenResource::make($user->tokens()->where('name', $validated->device_name)->first());
 
         return response()->json([
-            'message' => 'Successfully registered new User',
-            'email'   => $user->email,
-            'token'   => $token,
+            'message'        => 'Successfully registered new User',
+            'email'          => $user->email,
+            'plainTextToken' => $plainTextToken,
+            'token'          => $token,
         ]);
     }
 
@@ -41,33 +44,52 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = User::where('email', $request->email)->first();
             $plainTextToken = $user->createToken($request->device_name)->plainTextToken;
-
-            $token = $user->tokens()->where('name', $request->device_name)->first();
-
+            $token = TokenResource::make($user->tokens()->where('name', $request->device_name)->first());
 
             return response()->json([
-                'message' => 'Successfully authenticated',
-                'email'   => $request->email,
-                'token'   => $plainTextToken,
-                'token_name'      => $token->name,
-                'token_abilities' => $token->abilities,
+                'message'        => 'Successfully authenticated',
+                'email'          => $request->email,
+                'plainTextToken' => $plainTextToken,
+                'token'          => $token,
             ]);
         }
 
         return response()->json([
             'message' => 'The provided credentials do not match our records.',
-        ], 422);
+        ], 401);
     }
 
     public function check(Request $request): JsonResponse
     {
-        $currentToken = $request->user()->currentAccessToken();
+        $token = TokenResource::make($request->user()->currentAccessToken());
 
         return response()->json([
-            'message'         => 'Authenticated',
-            'email'           => Auth::user()->email,
-            'token_name'      => $currentToken->name,
-            'token_abilities' => $currentToken->abilities,
+            'message' => 'Authenticated',
+            'email'   => Auth::user()->email,
+            'token'   => $token,
         ]);
+    }
+
+    public function getTokens(Request $request): JsonResponse
+    {
+        $tokens = TokenResource::collection($request->user()->tokens()->get());
+
+        return response()->json([
+            'message' => 'Successfully retrieved tokens',
+            'tokens'  => $tokens,
+        ]);
+    }
+
+    public function deleteToken($id, Request $request): JsonResponse
+    {
+        if ($request->user()->tokens()->where('id', $id)->delete()) {
+            return response()->json([
+                'message' => 'Successfully deleted token',
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Failed to delete token! Token might not exist or you do not have permission to delete it.',
+        ], 401);
     }
 }
