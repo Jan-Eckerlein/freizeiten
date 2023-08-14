@@ -16,10 +16,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum', VerifyAdmin::class)->get('/users', function (Request $request) {
-    return User::all();
+// Admin
+Route::prefix('admin')->group(static function () {
+    Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
+        Route::get('/users', static function () {
+            return User::all();
+        });
+    });
+    
+    Route::post('/tokens', [\App\Http\Controllers\Admin\AdminAuthController::class, 'createAdminToken']);
 });
 
+// Auth
 Route::prefix('auth')->group(static function () {
     Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
     Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);

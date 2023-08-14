@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthLoginRequest;
 use App\Http\Requests\AuthRegisterRequest;
 use App\Http\Resources\TokenResource;
-use App\Http\Services\RequestService;
+use App\Http\Services\TokenService;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ class AuthController extends Controller
     /**
      * Handle an authentication attempt.
      */
-    public function register(AuthRegisterRequest $request): JsonResponse
+    public function register(AuthRegisterRequest $request, TokenService $tokenService): JsonResponse
     {
         $validated = (object) $request->validated();
         $user = User::create([
@@ -26,8 +26,11 @@ class AuthController extends Controller
             'lastName'  => $validated->last_name,
         ]);
 
-        $plainTextToken = $user->createToken($validated->device_name)->plainTextToken;
-        $token = TokenResource::make($user->tokens()->where('name', $validated->device_name)->first());
+        [$err, $plainTextToken] = $tokenService->createToken($user, $validated->device_name, ['user']);
+        if ($err) {
+            return response()->json($err, 403);
+        }
+        $token = TokenResource::make($tokenService->getTokenByDeviceName($user, $validated->device_name));
 
         return response()->json([
             'message'        => 'Successfully registered new User',
@@ -37,14 +40,17 @@ class AuthController extends Controller
         ]);
     }
 
-    public function login(AuthLoginRequest $request, RequestService $rs): JsonResponse
+    public function login(AuthLoginRequest $request, TokenService $tokenService): JsonResponse
     {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $user = User::where('email', $request->email)->first();
-            $plainTextToken = $user->createToken($request->device_name)->plainTextToken;
-            $token = TokenResource::make($user->tokens()->where('name', $request->device_name)->first());
+            [$err, $plainTextToken] = $tokenService->createToken($user, $request->device_name, ['user']);
+            if ($err) {
+                return response()->json($err, 403);
+            }
+            $token = TokenResource::make($tokenService->getTokenByDeviceName($user, $request->device_name));
 
             return response()->json([
                 'message'        => 'Successfully authenticated',
