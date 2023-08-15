@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Http\Services\RequestService;
 use Illuminate\Foundation\Http\FormRequest;
 
-class AuthLoginRequest extends FormRequest
+class TokenCreateWithTokenRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,8 @@ class AuthLoginRequest extends FormRequest
     public function rules(RequestService $rs): array
     {
         return [
-            'email'       => $rs->getRules()['email'],
-            'password'    => $rs->getRules()['password'],
-            'device_name' => $rs->getRules()['device_name'],
+            'device_name' => $rs->getRuleRequired('device_name'),
+            'abilities'   => $rs->getRuleRequired('abilities'),
         ];
     }
 }

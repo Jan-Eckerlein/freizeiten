@@ -1,0 +1,294 @@
+{
+    "info": {
+        "_postman_id": "32482bbf-844e-4521-a64e-81f91d780cb8",
+        "name": "Freizeiten",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "description": ""
+    },
+    "item": [
+        {
+            "name": "Auth Register",
+            "request": {
+                "method": "POST",
+                "url": {
+                    "raw": "auth/register?first_name=Jim&last_name=Eckerlein&email=jim.eckerlein@gmail.com&password=janeckerlein&password_confirmation=janeckerlein&device_name=JimUser&username=Jim",
+                    "query": [
+                        {
+                            "key": "first_name",
+                            "value": "Jim"
+                        },
+                        {
+                            "key": "last_name",
+                            "value": "Eckerlein"
+                        },
+                        {
+                            "key": "email",
+                            "value": "jim.eckerlein@gmail.com"
+                        },
+                        {
+                            "key": "password",
+                            "value": "janeckerlein"
+                        },
+                        {
+                            "key": "password_confirmation",
+                            "value": "janeckerlein"
+                        },
+                        {
+                            "key": "device_name",
+                            "value": "JimUser"
+                        },
+                        {
+                            "key": "username",
+                            "value": "Jim"
+                        }
+                    ],
+                    "variable": [],
+                    "path": [
+                        "register"
+                    ],
+                    "host": [
+                        "auth"
+                    ]
+                },
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Auth With Credentials",
+            "request": {
+                "method": "POST",
+                "url": {
+                    "raw": "auth/with-credentials",
+                    "query": [
+                        {
+                            "key": "email",
+                            "value": "jan.eckerlein@gmail.com",
+                            "disabled": true
+                        },
+                        {
+                            "key": "password",
+                            "value": "janeckerlein",
+                            "disabled": true
+                        }
+                    ],
+                    "variable": [],
+                    "path": [
+                        "with-credentials"
+                    ],
+                    "host": [
+                        "auth"
+                    ]
+                },
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "User-Agent",
+                        "value": "Thunder Client (https://www.thunderclient.com)",
+                        "disabled": true
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    },
+                    "raw": "{\n  \"email\": \"jan.eckerlein@gmail.com\",\n  \"password\": \"janeckerlein\",\n  \"device_name\": \"JanUser\",\n  \"abilities\": [\"user\"]\n}"
+                }
+            }
+        },
+        {
+            "name": "Auth Check",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "auth/check",
+                    "path": [
+                        "check"
+                    ],
+                    "host": [
+                        "auth"
+                    ]
+                },
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "User-Agent",
+                        "value": "Thunder Client (https://www.thunderclient.com)",
+                        "disabled": true
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Auth Tokens",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "auth/tokens",
+                    "path": [
+                        "tokens"
+                    ],
+                    "host": [
+                        "auth"
+                    ]
+                },
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Auth Token",
+            "request": {
+                "method": "DELETE",
+                "url": {
+                    "raw": "auth/tokens/17",
+                    "path": [
+                        "tokens",
+                        "17"
+                    ],
+                    "host": [
+                        "auth"
+                    ]
+                },
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "GET Users",
+            "request": {
+                "method": "GET",
+                "url": {
+                    "raw": "admin/users",
+                    "path": [
+                        "users"
+                    ],
+                    "host": [
+                        "admin"
+                    ]
+                },
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Admin CreateAdminToken",
+            "request": {
+                "method": "POST",
+                "url": {
+                    "raw": "admin/tokens?email=jan.eckerlein@gmail.com&password=janeckerlein&device_name=JimAdmin2",
+                    "query": [
+                        {
+                            "key": "email",
+                            "value": "jan.eckerlein@gmail.com"
+                        },
+                        {
+                            "key": "password",
+                            "value": "janeckerlein"
+                        },
+                        {
+                            "key": "device_name",
+                            "value": "JimAdmin2"
+                        }
+                    ],
+                    "variable": [],
+                    "path": [
+                        "tokens"
+                    ],
+                    "host": [
+                        "admin"
+                    ]
+                },
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "Auth With Token",
+            "request": {
+                "method": "POST",
+                "url": {
+                    "raw": "auth/with-token",
+                    "query": [
+                        {
+                            "key": "email",
+                            "value": "jan.eckerlein@gmail.com",
+                            "disabled": true
+                        },
+                        {
+                            "key": "password",
+                            "value": "janeckerlein",
+                            "disabled": true
+                        }
+                    ],
+                    "variable": [],
+                    "path": [
+                        "with-token"
+                    ],
+                    "host": [
+                        "auth"
+                    ]
+                },
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    },
+                    {
+                        "key": "User-Agent",
+                        "value": "Thunder Client (https://www.thunderclient.com)",
+                        "disabled": true
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    },
+                    "raw": "{\n  \"device_name\": \"JanUser\",\n  \"abilities\": [\"user\"]\n}"
+                }
+            }
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "19|iAjD29N1xI6SfkHmCwgRohZKeJy6sptUddDL8Zck",
+                "type": "string"
+            }
+        ]
+    }
+}

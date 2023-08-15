@@ -5,8 +5,8 @@ namespace App\Http\Services;
 
 class TokenService
 {
-
     private $abilities = ['user', 'admin'];
+
     private $onlyGrantAbilitiesBy = [
         'admin' => ['admin']
     ];
@@ -41,10 +41,11 @@ class TokenService
         return $user->tokens()->where('id', '!=', $user->currentAccessToken()->id)->delete();
     }
 
-    public function createToken($user, $token = null, $abilities = ['user']): array
+    public function createTokenByUser(string $name, array $abilities, $user): array
     {
-        $notPassingAbilities = $this->validateAbilities($abilities, $token);
-        if ($notPassingAbilities !== true) {
+        $notPassingAbilities = $this->checkForNotPassingAbilitiesByUser($abilities, $user);
+
+        if ($notPassingAbilities) {
             return [
                 [
                     'message' => 'Abilities not valid',
@@ -54,12 +55,31 @@ class TokenService
             ];
         }
         return [
-            false,
-            $user->createToken($token, $abilities)->plainTextToken
+            null,
+            $user->createToken($name, $abilities)->plainTextToken
         ];
     }
 
-    public function validateAbilities(array $abilities, $token): array|bool
+    public function createTokenByToken(string $name, array $abilities, $token): array
+    {
+        $notPassingAbilities = $this->checkForNotPassingAbilitiesByToken($abilities, $token);
+
+        if ($notPassingAbilities) {
+            return [
+                [
+                    'message' => 'Abilities not valid',
+                    'notPassingAbilities' => $notPassingAbilities
+                ],
+                null
+            ];
+        }
+        return [
+            null,
+            $token->createToken($name, $abilities)->plainTextToken
+        ];
+    }
+
+    public function checkForNotPassingAbilitiesByToken(array $abilities, $token): array|bool
     {
         // abilities need to be in the array of abilities
         // and if token ist provided also included in its abilities list
@@ -73,7 +93,23 @@ class TokenService
                 $notPassing[] = $ability;
             }
         }
-        if (empty($notPassing)) return true;
+        if (empty($notPassing)) return false;
+        return $notPassing;
+    }
+
+    public function checkForNotPassingAbilitiesByUser(array $abilities, $user): array|bool
+    {
+        $notPassing = [];
+
+        foreach ($abilities as $ability) {
+            if (!in_array($ability, $this->abilities)) {
+                $notPassing[] = $ability;
+            }
+            if (isset($this->onlyGrantAbilitiesBy[$ability]) && !$user->hasGlobalRole($this->onlyGrantAbilitiesBy[$ability])) {
+                $notPassing[] = $ability;
+            }
+        }
+        if (empty($notPassing)) return false;
         return $notPassing;
     }
 }

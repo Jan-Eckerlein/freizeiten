@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AuthLoginRequest;
+use App\Http\Requests\TokenCreateWithCredentialsRequest;
 use App\Http\Resources\TokenResource;
 use App\Http\Services\TokenService;
 use App\Models\User;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminAuthController extends Controller
 {
-    public function createAdminToken (AuthLoginRequest $request, TokenService $tokenService)
+    public function createAdminToken (TokenCreateWithCredentialsRequest $request, TokenService $tokenService)
     {
         $credentials = $request->only('email', 'password');
 
@@ -23,7 +24,7 @@ class AdminAuthController extends Controller
                     'message' => 'The provided credentials do not match our records.',
                 ], 401);
             }
-            
+
             $plainTextToken = $user->createToken($request->device_name, ['admin'])->plainTextToken;
             $token = TokenResource::make($tokenService->getTokenByDeviceName($user, $request->device_name));
 
