@@ -1,0 +1,273 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "Freizeiten",
+    "dateExported": "2023-08-16T20:21:30.807Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "cd725fe4-9edf-45f0-8bab-bbd622ddae3f",
+            "colId": "073035ad-a609-48ee-b7d8-5be1e8538575",
+            "containerId": "",
+            "name": "Auth Register",
+            "url": "auth/register?first_name=Jim&last_name=Eckerlein&email=jim.eckerlein@gmail.com&password=janeckerlein&password_confirmation=janeckerlein&device_name=JimUser&username=Jim",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-08-12T21:04:08.830Z",
+            "modified": "2023-08-14T18:55:17.300Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                }
+            ],
+            "params": [
+                {
+                    "name": "first_name",
+                    "value": "Jim",
+                    "isPath": false
+                },
+                {
+                    "name": "last_name",
+                    "value": "Eckerlein",
+                    "isPath": false
+                },
+                {
+                    "name": "email",
+                    "value": "jim.eckerlein@gmail.com",
+                    "isPath": false
+                },
+                {
+                    "name": "password",
+                    "value": "janeckerlein",
+                    "isPath": false
+                },
+                {
+                    "name": "password_confirmation",
+                    "value": "janeckerlein",
+                    "isPath": false
+                },
+                {
+                    "name": "device_name",
+                    "value": "JimUser",
+                    "isPath": false
+                },
+                {
+                    "name": "username",
+                    "value": "Jim",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        },
+        {
+            "_id": "e7dbd905-419b-4965-98c3-611a52bf6b64",
+            "colId": "073035ad-a609-48ee-b7d8-5be1e8538575",
+            "containerId": "",
+            "name": "Auth With Credentials",
+            "url": "auth/with-credentials",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2023-08-12T21:24:16.321Z",
+            "modified": "2023-08-15T14:59:55.725Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                },
+                {
+                    "name": "User-Agent",
+                    "value": "Thunder Client (https://www.thunderclient.com)",
+                    "isDisabled": true
+                }
+            ],
+            "params": [
+                {
+                    "name": "email",
+                    "value": "jan.eckerlein@gmail.com",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "password",
+                    "value": "janeckerlein",
+                    "isDisabled": true,
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"jan.eckerlein@gmail.com\",\n  \"password\": \"janeckerlein\",\n  \"device_name\": \"JanUser\",\n  \"abilities\": [\"user\"]\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "c6b71721-3f1c-48b8-bfd6-dfc876bde214",
+            "colId": "073035ad-a609-48ee-b7d8-5be1e8538575",
+            "containerId": "",
+            "name": "Auth Check",
+            "url": "auth/check",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2023-08-13T14:00:11.399Z",
+            "modified": "2023-08-15T13:40:30.542Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                },
+                {
+                    "name": "User-Agent",
+                    "value": "Thunder Client (https://www.thunderclient.com)",
+                    "isDisabled": true
+                }
+            ],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "1a84a82b-2802-4d47-8b04-f98eb65759b1",
+            "colId": "073035ad-a609-48ee-b7d8-5be1e8538575",
+            "containerId": "",
+            "name": "Auth With Token",
+            "url": "auth/with-token",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2023-08-15T15:01:27.793Z",
+            "modified": "2023-08-15T15:03:30.713Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                },
+                {
+                    "name": "User-Agent",
+                    "value": "Thunder Client (https://www.thunderclient.com)",
+                    "isDisabled": true
+                }
+            ],
+            "params": [
+                {
+                    "name": "email",
+                    "value": "jan.eckerlein@gmail.com",
+                    "isDisabled": true,
+                    "isPath": false
+                },
+                {
+                    "name": "password",
+                    "value": "janeckerlein",
+                    "isDisabled": true,
+                    "isPath": false
+                }
+            ],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"device_name\": \"JanUser\",\n  \"abilities\": [\"user\"]\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "9462a358-2046-4c87-9837-9af58bf1e994",
+            "colId": "073035ad-a609-48ee-b7d8-5be1e8538575",
+            "containerId": "",
+            "name": "Auth Tokens",
+            "url": "auth/tokens",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2023-08-13T19:24:40.481Z",
+            "modified": "2023-08-15T13:40:17.653Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                }
+            ],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "42e30eeb-4085-4f94-9872-fd5b8918df9a",
+            "colId": "073035ad-a609-48ee-b7d8-5be1e8538575",
+            "containerId": "",
+            "name": "Auth Token",
+            "url": "auth/tokens/17",
+            "method": "DELETE",
+            "sortNum": 40000,
+            "created": "2023-08-13T19:39:46.826Z",
+            "modified": "2023-08-15T13:40:50.235Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                }
+            ],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "7d81e659-5b5b-40e3-b7f3-cc52856092fb",
+            "colId": "073035ad-a609-48ee-b7d8-5be1e8538575",
+            "containerId": "",
+            "name": "GET Users",
+            "url": "admin/users",
+            "method": "GET",
+            "sortNum": 50000,
+            "created": "2023-08-14T17:24:29.473Z",
+            "modified": "2023-08-15T13:40:04.957Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                }
+            ],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "b07949da-7013-4f14-a566-d00075b4d4dc",
+            "colId": "073035ad-a609-48ee-b7d8-5be1e8538575",
+            "containerId": "",
+            "name": "Admin CreateAdminToken",
+            "url": "admin/tokens?email=jan.eckerlein@gmail.com&password=janeckerlein&device_name=JimAdmin2",
+            "method": "POST",
+            "sortNum": 60000,
+            "created": "2023-08-14T18:38:41.984Z",
+            "modified": "2023-08-15T13:38:38.495Z",
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "application/json"
+                }
+            ],
+            "params": [
+                {
+                    "name": "email",
+                    "value": "jan.eckerlein@gmail.com",
+                    "isPath": false
+                },
+                {
+                    "name": "password",
+                    "value": "janeckerlein",
+                    "isPath": false
+                },
+                {
+                    "name": "device_name",
+                    "value": "JimAdmin2",
+                    "isPath": false
+                }
+            ],
+            "tests": []
+        }
+    ],
+    "settings": {
+        "auth": {
+            "type": "bearer",
+            "bearer": "19|iAjD29N1xI6SfkHmCwgRohZKeJy6sptUddDL8Zck"
+        },
+        "options": {
+            "baseUrl": "localhost/api/"
+        }
+    }
+}
