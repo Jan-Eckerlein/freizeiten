@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\VerifyAdmin;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Admin
-Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
+Route::middleware(['auth:sanctum', AdminMiddleware::class])->prefix('admin')->group(function () {
     Route::get('/users', static function () {
         return User::all();
     });
