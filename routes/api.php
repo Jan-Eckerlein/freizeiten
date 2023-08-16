@@ -17,25 +17,19 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Admin
-Route::prefix('admin')->group(static function () {
-    Route::middleware(['auth:sanctum', 'abilities:admin'])->group(function () {
-        Route::get('/users', static function () {
-            return User::all();
-        });
+Route::middleware(['auth:sanctum'])->prefix('admin')->group(function () {
+    Route::get('/users', static function () {
+        return User::all();
     });
-
-    Route::post('/tokens', [\App\Http\Controllers\Admin\AdminAuthController::class, 'createAdminToken']);
 });
 
 // Auth
 Route::prefix('auth')->group(static function () {
     Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
-    Route::post('/with-credentials', [\App\Http\Controllers\AuthController::class, 'createTokenWithCredentials']);
+    Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 
     Route::middleware('auth:sanctum')->group(static function () {
-        Route::post('/with-token', [\App\Http\Controllers\AuthController::class, 'createTokenWithToken']);
         Route::get('/check', [\App\Http\Controllers\AuthController::class, 'check']);
-        Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
         Route::get('/tokens', [\App\Http\Controllers\AuthController::class, 'getTokens']);
         Route::delete('/tokens/{id}', [\App\Http\Controllers\AuthController::class, 'deleteToken']);
     });

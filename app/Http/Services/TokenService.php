@@ -41,76 +41,9 @@ class TokenService
         return $user->tokens()->where('id', '!=', $user->currentAccessToken()->id)->delete();
     }
 
-    public function createTokenByUser(string $name, array $abilities, $user): array
+    public function createToken(string $name, $user): string
     {
-        $notPassingAbilities = $this->checkForNotPassingAbilitiesByUser($abilities, $user);
-
-        if ($notPassingAbilities) {
-            return [
-                [
-                    'message' => 'Abilities not valid',
-                    'notPassingAbilities' => $notPassingAbilities
-                ],
-                null
-            ];
-        }
-        return [
-            null,
-            $user->createToken($name, $abilities)->plainTextToken
-        ];
-    }
-
-    public function createTokenByToken(string $name, array $abilities, $token): array
-    {
-        $notPassingAbilities = $this->checkForNotPassingAbilitiesByToken($abilities, $token);
-
-        if ($notPassingAbilities) {
-            return [
-                [
-                    'message' => 'Abilities not valid',
-                    'notPassingAbilities' => $notPassingAbilities
-                ],
-                null
-            ];
-        }
-        return [
-            null,
-            $token->createToken($name, $abilities)->plainTextToken
-        ];
-    }
-
-    public function checkForNotPassingAbilitiesByToken(array $abilities, $token): array|bool
-    {
-        // abilities need to be in the array of abilities
-        // and if token ist provided also included in its abilities list
-        $notPassing = [];
-
-        foreach ($abilities as $ability) {
-            if (!in_array($ability, $this->abilities)) {
-                $notPassing[] = $ability;
-            }
-            if (isset($this->onlyGrantAbilitiesBy[$ability]) && !in_array($ability, $token->abilities)) {
-                $notPassing[] = $ability;
-            }
-        }
-        if (empty($notPassing)) return false;
-        return $notPassing;
-    }
-
-    public function checkForNotPassingAbilitiesByUser(array $abilities, $user): array|bool
-    {
-        $notPassing = [];
-
-        foreach ($abilities as $ability) {
-            if (!in_array($ability, $this->abilities)) {
-                $notPassing[] = $ability;
-            }
-            if (isset($this->onlyGrantAbilitiesBy[$ability]) && !$user->hasGlobalRole($this->onlyGrantAbilitiesBy[$ability])) {
-                $notPassing[] = $ability;
-            }
-        }
-        if (empty($notPassing)) return false;
-        return $notPassing;
+        return $user->createToken($name)->plainTextToken;
     }
 }
 

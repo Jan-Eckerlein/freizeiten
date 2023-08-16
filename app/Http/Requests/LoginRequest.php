@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Http\Services\RequestService;
 use Illuminate\Foundation\Http\FormRequest;
 
-class TokenCreateWithCredentialsRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,6 @@ class TokenCreateWithCredentialsRequest extends FormRequest
             'device_name'   => $rs->getRuleRequired('device_name'),
             'email'         => $rs->getRuleRequired('email'),
             'password'      => $rs->getRuleRequired('password'),
-            'abilities'     => $rs->getRuleRequired('abilities'),
         ];
     }
 }

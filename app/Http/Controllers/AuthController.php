@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\TokenCreateWithTokenAuthRequest;
 use App\Http\Requests\AuthRegisterRequest;
-use App\Http\Requests\TokenCreateWithCredentials;
-use App\Http\Requests\TokenCreateWithCredentialsRequest;
-use App\Http\Requests\TokenCreateWithTokenRequest;
+use App\Http\Requests\LoginRequest;
 use App\Http\Resources\TokenResource;
 use App\Http\Services\TokenService;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -31,10 +27,7 @@ class AuthController extends Controller
             'lastName'  => $validated->last_name,
         ]);
 
-        [$err, $plainTextToken] = $tokenService->createTokenByUser($validated->device_name, ['user'], $user);
-        if ($err) {
-            return response()->json($err, 403);
-        }
+        $plainTextToken = $tokenService->createToken($validated->device_name, $user);
         $token = TokenResource::make($tokenService->getTokenByDeviceName($user, $validated->device_name));
 
         return response()->json([
@@ -44,34 +37,13 @@ class AuthController extends Controller
             'token'          => $token,
         ]);
     }
-
-    public function createTokenWithToken(TokenCreateWithTokenRequest $request, TokenService $tokenService): JsonResponse
-    {
-        $token = PersonalAccessToken::findToken(request()->bearerToken());
-        $user = $token->tokenable;
-
-        [$err, $plainTextToken] = $tokenService->createTokenByToken($request->device_name, $request->abilities, $token);
-        if ($err) return response()->json($err, 403);
-
-        $token = TokenResource::make(PersonalAccessToken::findToken($plainTextToken));
-
-        return response()->json([
-            'message'        => 'Successfully authenticated',
-            'email'          => $user->email,
-            'plainTextToken' => $plainTextToken,
-            'token'          => $token,
-        ]);
-    }
-
-    public function createTokenWithCredentials(TokenCreateWithCredentialsRequest $request, TokenService $tokenService) {
+    public function login(LoginRequest $request, TokenService $tokenService) {
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
             $user = User::where('email', $request->email)->first();
 
-            [$err, $plainTextToken] = $tokenService->createTokenByUser($request->device_name, $request->abilities, $user);
-            if ($err)   return response()->json($err, 403);
-
+            $plainTextToken = $tokenService->createToken($request->device_name, $user);
             $token = TokenResource::make($tokenService->getTokenByDeviceName($user, $request->device_name));
 
             return response()->json([
