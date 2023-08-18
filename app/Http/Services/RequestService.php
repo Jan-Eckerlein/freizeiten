@@ -16,8 +16,12 @@ class RequestService
         'device_name'               => ['string', 'min:5', 'max:255', 'regex:/^[a-zA-Z0-9_.-]*$/'],
         'abilities'                 => ['array', ],
         'token'                     => ['string'],
-        'organization_onwer_id'     => ['string', 'exists:users,id'],
         'organization_name'         => ['string', 'unique:organization,name'],
+        'organization_onwer_id'     => ['numeric', 'exists:users,id'],
+        'organization_user_ids'     => ['array'],
+        'organization_user_ids.*'   => ['numeric', 'exists:users,id'],
+        'organization_admin_ids'    => ['array'],
+        'organization_admin_ids.*'  => ['numeric', 'exists:users,id'],
     ];
 
     public function getRules(): array

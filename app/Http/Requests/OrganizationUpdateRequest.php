@@ -12,7 +12,7 @@ class OrganizationUpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,8 +23,12 @@ class OrganizationUpdateRequest extends FormRequest
     public function rules(RequestService $rs): array
     {
         return [
-            'name' => $rs->getRuleRequiredWithout('organization_name', ['owner_id']),
-            'owner_id' => $rs->getRuleRequiredWithout('organization_onwer_id', ['name'])
+            'name'        => $rs->getRuleRequiredWithout('organization_name', ['owner_id']),
+            'owner_id'    => $rs->getRuleRequiredWithout('organization_onwer_id', ['name']),
+            'user_ids'    => $rs->getRule('organization_user_ids'),
+            'user_ids.*'  => $rs->getRule('organization_user_ids.*'),
+            'admin_ids'   => $rs->getRule('organization_admin_ids'),
+            'admin_ids.*' => $rs->getRule('organization_admin_ids.*'),
         ];
     }
 }

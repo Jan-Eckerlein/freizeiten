@@ -35,25 +35,49 @@ class Organization extends Model
         return $this->belongsToMany(User::class)->withPivot('nickname', 'org_role');
     }
 
+    public function syncUsers(array $user_ids)
+    {
+        if (!in_array($this->getOwner()->id, $user_ids)) {
+            throw new \Exception('Owner cannot be removed from Organization');
+        }
+        $this->users()->sync($user_ids);
+        $this->save();
+        return $this->users;
+    }
+
     /**
      * Get the owner for the Organization
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return User
      */
     public function getOwner()
     {
-        return $this->users()->wherePivot('org_role', 'owner')->get();
+        return $this->users()->wherePivot('org_role', 'owner')->first();
     }
 
     /**
      * Set the owner for the Organization
      *
-     * @param User $user
+     * @param User $user to set as owner
+     * @return User|null $currentOwner if exists
      */
     public function setOwner(User $user)
     {
-        $this->users()->attach($user, ['org_role' => 'owner']);
+        $currentOwner = $this->getOwner();
+        if ($currentOwner) {
+            $this->users()->updateExistingPivot($currentOwner->id, ['org_role' => 'admin']);
+        }
+
+        $isPartOfOrg = $this->users()->where('user_id', $user->id)->exists();
+        if (!$isPartOfOrg) {
+            $this->users()->attach($user, ['org_role' => 'owner']);
+        } else {
+            $this->users()->updateExistingPivot($user->id, ['org_role' => 'owner']);
+        }
+
         $this->save();
+
+        return $currentOwner ?? null;
     }
 
     /**
@@ -98,6 +122,33 @@ class Organization extends Model
     {
         $this->users()->attach($user, ['org_role' => 'admin', 'nickname' => $nickname]);
         $this->save();
+    }
+
+    public function removeAdmin(User $user)
+    {
+        $this->users()->updateExistingPivot($user->id, ['org_role' => 'member']);
+        $this->save();
+    }
+
+    /**
+     * Sync the admins for the Organization
+     *
+     * @param array $admin_ids
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function syncAdmins(array $admin_ids)
+    {
+        $oldAdmins = $this->getAdmins();
+        $oldAdmins->forEach(function ($oldAdmin) {
+            $this->users()->updateExistingPivot($oldAdmin->id, ['org_role' => 'member']);
+        });
+
+        collect($admin_ids)->forEach(function ($admin) {
+            $this->users()->updateExistingPivot($admin->id, ['org_role' => 'admin']);
+        });
+
+        $this->save();
+        return $this->getAdmins();
     }
 
     /**

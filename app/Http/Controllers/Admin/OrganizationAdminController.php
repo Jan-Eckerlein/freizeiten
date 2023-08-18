@@ -19,31 +19,21 @@ class OrganizationAdminController extends Controller
 
     public function store(OrganizationCreateRequest $request)
     {
-        try {
-            $organization = Organization::create($request->only('name'));
-            $organization->save();
-        } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Failed to create Organization',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
+        $organization = Organization::create($request->only('name'));
+        $organization->save();
 
-        try {
-            $organization->setOwner(User::find($request->owner_id));
-            $owner = $organization->getOwner();
+        if ($request->user_ids) $organization->users()->sync($request->user_ids);
+        if ($request->admin_ids) $admins = $organization->syncAdmins($request->admin_ids);
 
-        } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Failed to associate owner to Organization',
-                'error' => $th->getMessage(),
-            ], 500);
-        }
+        $previousOwner = $organization->setOwner(User::find($request->owner_id));
 
         return response()->json([
-            'message'      => 'Successfully created Organization',
-            'organization' => $organization,
-            'owner'        => $owner,
+            'message'       => 'Successfully created Organization',
+            'organization'  => $organization,
+            'owner'         => $organization->getOwner(),
+            'previousOwner' => $previousOwner ?? null,
+            'admins'        => $admins ?? null,
+            'users'         => $organization->users,
         ]);
     }
 
@@ -68,30 +58,19 @@ class OrganizationAdminController extends Controller
             ], 404);
         }
 
-        try {
-            $organization->update($request->name);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Failed to update Organization',
-                'error'   => $th->getMessage(),
-            ], 500);
-        }
+        $organization->update($request->only('name'));
 
-        try {
-            $organization->owner()->associate($request->owner_id);
-            $owner = $organization->owner()->get();
-
-        } catch (\Throwable $th) {
-            return response()->json([
-                'message' => 'Failed to associate owner to Organization',
-                'error'   => $th->getMessage(),
-            ], 500);
-        }
+        if ($request->user_ids)  $organization->syncUsers($request->user_ids);
+        if ($request->admin_ids) $organization->syncAdmins($request->admin_ids);
+        if ($request->owner_id)  $previousOwner = $organization->setOwner(User::find($request->owner_id));
 
         return response()->json([
-            'message'      => 'Successfully updated Organization',
-            'organization' => $organization,
-            'owner'        => $owner,
+            'message'         => 'Successfully updated Organization',
+            'organization'    => $organization,
+            'ownerId'         => $organization->getOwner()->id,
+            'previousOwnerId' => $previousOwner->id ?? null,
+            'adminIds'        => $organization->getAdmins->pluck('id'),
+            'userIds'         => $organization->users->pluck('id'),
         ]);
     }
 

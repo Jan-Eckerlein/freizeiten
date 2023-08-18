@@ -23,8 +23,12 @@ class OrganizationCreateRequest extends FormRequest
     public function rules(RequestService $rs): array
     {
         return [
-            'name' => $rs->getRuleRequired('organization_name'),
-            'owner_id' => $rs->getRuleRequired('organization_onwer_id'),
+            'name'        => $rs->getRuleRequired('organization_name'),
+            'owner_id'    => $rs->getRuleRequired('organization_onwer_id'),
+            'user_ids'    => $rs->getRule('organization_user_ids'),
+            'user_ids.*'  => $rs->getRule('organization_user_ids.*'),
+            'admin_ids'   => $rs->getRule('organization_admin_ids'),
+            'admin_ids.*' => $rs->getRule('organization_admin_ids.*'),
         ];
     }
 }
