@@ -28,13 +28,24 @@ class Role extends Model
     ];
 
     /**
-     * Get the organization that owns the Role
+     * Get the subject that owns the Role
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+    public function subject()
+    {
+        return $this->belongsTo(Subject::class);
+    }
+
+    /**
+     * Get the organization that owns the Role
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
+     */
     public function organization()
     {
-        return $this->belongsTo(Organization::class, 'organization_id');
+        // through table subject
+        return $this->hasOneThrough(Organization::class, Subject::class);
     }
 
     /**

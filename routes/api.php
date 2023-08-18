@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum', AdminMiddleware::class])->prefix('admin')->gr
     Route::get('/users', static function () {
         return User::all();
     });
+    Route::resource('organizations', \App\Http\Controllers\Admin\OrganizationAdminController::class);
 });
 
 // Auth

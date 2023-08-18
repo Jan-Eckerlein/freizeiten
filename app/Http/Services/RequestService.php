@@ -16,6 +16,8 @@ class RequestService
         'device_name'               => ['string', 'min:5', 'max:255', 'regex:/^[a-zA-Z0-9_.-]*$/'],
         'abilities'                 => ['array', ],
         'token'                     => ['string'],
+        'organization_onwer_id'     => ['string', 'exists:users,id'],
+        'organization_name'         => ['string', 'unique:organization,name'],
     ];
 
     public function getRules(): array
@@ -23,23 +25,38 @@ class RequestService
         return $this->rules;
     }
 
-    public function getRule(string $rule): array
+    public function getRule(string $rule, array $additionalRules = []): array
     {
-        return $this->rules[$rule];
+        return array_merge($this->rules[$rule], $additionalRules);
     }
 
-    public function getRuleRequired(string $rule): array
+    public function getRuleRequired(string $rule, array $additionalRules = []): array
     {
-        return array_merge($this->rules[$rule], ['required']);
+        return array_merge($this->rules[$rule], ['required'], $additionalRules);
     }
 
-    public function getRuleRequiredWith(string $rule, array $with): array
+    public function getRuleRequiredIf(string $rule, string $anotherField, string $anotherFieldValue, array $additionalRules = []): array
     {
-        return array_merge($this->rules[$rule], ['required'], $with);
+        return array_merge($this->rules[$rule], ['required_if:' . $anotherField . ',' . $anotherFieldValue], $additionalRules);
     }
 
-    public function getRuleWith(string $rule, array $with): array
+    public function getRuleRequiredWith(string $rule, array $presentFields, array $additionalRules = []): array
     {
-        return array_merge($this->rules[$rule], $with);
+        return array_merge($this->rules[$rule], ['required_with:' . implode(',', $presentFields)], $additionalRules);
+    }
+
+    public function getRuleRequiredWithAll(string $rule, array $presentFields, array $additionalRules = []): array
+    {
+        return array_merge($this->rules[$rule], ['required_with_all:' . implode(',', $presentFields)], $additionalRules);
+    }
+
+    public function getRuleRequiredWithout(string $rule, array $presentFields, array $additionalRules = []): array
+    {
+        return array_merge($this->rules[$rule], ['required_without:' . implode(',', $presentFields)], $additionalRules);
+    }
+
+    public function getRuleRequiredWithoutAll(string $rule, array $presentFields, array $additionalRules = []): array
+    {
+        return array_merge($this->rules[$rule], ['required_without_all:' . implode(',', $presentFields)], $additionalRules);
     }
 }

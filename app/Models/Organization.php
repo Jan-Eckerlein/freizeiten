@@ -23,19 +23,7 @@ class Organization extends Model
      */
     protected $fillable = [
         'name',
-        'owner_id',
     ];
-
-    /**
-     * Get the owner that owns the Organization
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-
-    public function owner()
-    {
-        return $this->belongsTo(User::class, 'owner_id');
-    }
 
     /**
      * Get all of the users for the Organization
@@ -44,7 +32,72 @@ class Organization extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class)->withPivot('nickname', 'org_role');
+    }
+
+    /**
+     * Get the owner for the Organization
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function getOwner()
+    {
+        return $this->users()->wherePivot('org_role', 'owner')->get();
+    }
+
+    /**
+     * Set the owner for the Organization
+     *
+     * @param User $user
+     */
+    public function setOwner(User $user)
+    {
+        $this->users()->attach($user, ['org_role' => 'owner']);
+        $this->save();
+    }
+
+    /**
+     * Get all of the members for the Organization
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function getMembers()
+    {
+        return $this->users()->wherePivot('org_role', 'member')->get();
+    }
+
+    /**
+     * Add a member to the Organization
+     *
+     * @param User $user
+     * @param string $nickname
+     */
+    public function addMember(User $user, string $nickname)
+    {
+        $this->users()->attach($user, ['org_role' => 'member', 'nickname' => $nickname]);
+        $this->save();
+    }
+
+    /**
+     * Get all of the admins for the Organization
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function getAdmins()
+    {
+        return $this->users()->wherePivot('org_role', 'admin')->get();
+    }
+
+    /**
+     * Add an admin to the Organization
+     *
+     * @param User $user
+     * @param string $nickname
+     */
+    public function addAdmin(User $user, string $nickname)
+    {
+        $this->users()->attach($user, ['org_role' => 'admin', 'nickname' => $nickname]);
+        $this->save();
     }
 
     /**

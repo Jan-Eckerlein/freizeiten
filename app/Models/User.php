@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -45,4 +44,54 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get all of the organizations for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function organizations()
+    {
+        return $this->belongsToMany(Organization::class)->withPivot('org_role');
+    }
+
+    /**
+     * Get a specific organization for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function organization(string $orgId)
+    {
+        return $this->belongsToMany(Organization::class)->wherePivot('organization_id', $orgId);
+    }
+
+    /**
+     * Get the Organization that the User owns
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function ownedOrganizations()
+    {
+        return $this->belongsToMany(Organization::class)->wherePivot('org_role', 'owner');
+    }
+
+    /**
+     * Get all of the roles for the User for a given organization
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function roles(string $orgId)
+    {
+        return $this->belongsToMany(Role::class)->wherePivot('organization_id', $orgId);
+    }
+
+    /**
+     * Get the Nickname for the User for a given organization
+     *
+     * @return string
+     */
+    public function nickname(string $orgId)
+    {
+        return $this->belongsToMany(Organization::class)->wherePivot('organization_id', $orgId)->first()->pivot->nickname;
+    }
 }
