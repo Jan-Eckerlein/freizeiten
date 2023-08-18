@@ -23,13 +23,13 @@ class AuthRegisterRequest extends FormRequest
     public function rules(RequestService $rs): array
     {
         return [
-            'username'              => $rs->getRules()['username'],
-            'first_name'            => $rs->getRules()['first_name'],
-            'last_name'             => $rs->getRules()['last_name'],
-            'email'                 => $rs->getRules()['new_email'],
-            'password'              => $rs->getRules()['new_password'],
-            'password_confirmation' => $rs->getRules()['password_confirmation'],
-            'device_name'           => $rs->getRules()['device_name']
+            'username'              => $rs->getRuleRequired('username'),
+            'first_name'            => $rs->getRuleRequired('first_name'),
+            'last_name'             => $rs->getRuleRequired('last_name'),
+            'email'                 => $rs->getRuleRequired('new_email'),
+            'password'              => $rs->getRuleRequired('new_password'),
+            'password_confirmation' => $rs->getRuleRequired('password_confirmation'),
+            'device_name'           => $rs->getRuleRequired('device_name')
         ];
     }
 }
