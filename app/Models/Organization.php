@@ -105,7 +105,7 @@ class Organization extends Model
     /**
      * Get all of the admins for the Organization
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAdmins()
     {

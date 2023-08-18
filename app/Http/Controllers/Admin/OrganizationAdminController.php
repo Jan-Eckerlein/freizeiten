@@ -7,7 +7,6 @@ use App\Http\Requests\OrganizationCreateRequest;
 use App\Http\Requests\OrganizationUpdateRequest;
 use App\Models\Organization;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class OrganizationAdminController extends Controller
 {
@@ -23,17 +22,17 @@ class OrganizationAdminController extends Controller
         $organization->save();
 
         if ($request->user_ids) $organization->users()->sync($request->user_ids);
-        if ($request->admin_ids) $admins = $organization->syncAdmins($request->admin_ids);
+        if ($request->admin_ids) $organization->syncAdmins($request->admin_ids);
 
         $previousOwner = $organization->setOwner(User::find($request->owner_id));
 
         return response()->json([
-            'message'       => 'Successfully created Organization',
-            'organization'  => $organization,
-            'owner'         => $organization->getOwner(),
-            'previousOwner' => $previousOwner ?? null,
-            'admins'        => $admins ?? null,
-            'users'         => $organization->users,
+            'message'         => 'Successfully created Organization',
+            'organization'    => $organization,
+            'ownerId'         => $organization->getOwner()->id,
+            'previousOwnerId' => $previousOwner->id ?? null,
+            'adminIds'        => $organization->getAdmins()->pluck('id'),
+            'userIds'         => $organization->users()->get()->pluck('id'),
         ]);
     }
 
@@ -69,8 +68,8 @@ class OrganizationAdminController extends Controller
             'organization'    => $organization,
             'ownerId'         => $organization->getOwner()->id,
             'previousOwnerId' => $previousOwner->id ?? null,
-            'adminIds'        => $organization->getAdmins->pluck('id'),
-            'userIds'         => $organization->users->pluck('id'),
+            'adminIds'        => $organization->getAdmins()->pluck('id'),
+            'userIds'         => $organization->users()->get()->pluck('id'),
         ]);
     }
 
