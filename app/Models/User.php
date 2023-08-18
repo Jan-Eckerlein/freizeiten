@@ -52,7 +52,7 @@ class User extends Authenticatable
      */
     public function organizations()
     {
-        return $this->belongsToMany(Organization::class)->withPivot('org_role');
+        return $this->belongsToMany(Organization::class);
     }
 
     /**
@@ -62,17 +62,17 @@ class User extends Authenticatable
      */
     public function organization(string $orgId)
     {
-        return $this->belongsToMany(Organization::class)->wherePivot('organization_id', $orgId);
+        return $this->belongsToMany(Organization::class);
     }
 
     /**
      * Get the Organization that the User owns
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function ownedOrganizations()
+    public function getOwnedOrganizations()
     {
-        return $this->belongsToMany(Organization::class)->wherePivot('org_role', 'owner');
+        return $this->organizations()->wherePivot('org_role', 'owner')->get();
     }
 
     /**
@@ -82,7 +82,7 @@ class User extends Authenticatable
      */
     public function roles(string $orgId)
     {
-        return $this->belongsToMany(Role::class)->wherePivot('organization_id', $orgId);
+        return $this->belongsToMany(Role::class);
     }
 
     /**
