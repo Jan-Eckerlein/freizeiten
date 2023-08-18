@@ -36,3 +36,11 @@ Route::prefix('auth')->group(static function () {
         Route::delete('/tokens/{id}', [\App\Http\Controllers\AuthController::class, 'deleteToken']);
     });
 });
+
+// Organization
+Route::middleware(['auth:sanctum'])->prefix('organizations')->group(static function () {
+    Route::get('/', [\App\Http\Controllers\OrganizationController::class, 'index']);
+    Route::get('/{id}', [\App\Http\Controllers\OrganizationController::class, 'show']);
+    Route::put('/{id}', [\App\Http\Controllers\OrganizationController::class, 'update']);
+    Route::delete('/{id}', [\App\Http\Controllers\OrganizationController::class, 'destroy']);
+});
