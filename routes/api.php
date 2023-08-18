@@ -43,4 +43,7 @@ Route::middleware(['auth:sanctum'])->prefix('organizations')->group(static funct
     Route::get('/{id}', [\App\Http\Controllers\OrganizationController::class, 'show']);
     Route::put('/{id}', [\App\Http\Controllers\OrganizationController::class, 'update']);
     Route::delete('/{id}', [\App\Http\Controllers\OrganizationController::class, 'destroy']);
+
+    Route::post('/{id}/ghost_user', [\App\Http\Controllers\OrganizationController::class, 'createGhostUser']);
+    Route::delete('/{id}/ghost_user/{ghostUserId}', [\App\Http\Controllers\OrganizationController::class, 'deleteGhostUser']);
 });

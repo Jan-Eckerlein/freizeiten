@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\GhostUserCreateRequest;
 use App\Http\Requests\OrganizationUpdateRequest;
+use App\Http\Resources\OgranizationResource;
 use App\Models\User;
 
 class OrganizationController extends Controller
@@ -15,7 +17,7 @@ class OrganizationController extends Controller
     public function index()
     {
         $user = User::find(auth()->user()->id);
-        $organizations = $user->organizations()->get();
+        $organizations = OgranizationResource::collection($user->organizations);
         return $organizations
             ? response()->json([
                 'message' => 'Successfully retrieved Organizations',
@@ -32,7 +34,7 @@ class OrganizationController extends Controller
     public function show(string $id)
     {
         $user = User::find(auth()->user()->id);
-        $organization = $user->organizations()->whereOrganizationId($id)->first();
+        $organization = OgranizationResource::make($user->organizations()->whereOrganizationId($id)->first());
 
         return $organization
             ? response()->json([
@@ -90,6 +92,58 @@ class OrganizationController extends Controller
         $organization->delete();
         return response()->json([
             'message' => 'Successfully deleted Organization',
+        ]);
+    }
+
+    /**
+     * Create a ghost user to add as a member to an organization
+     */
+    public function createGhostUser(GhostUserCreateRequest $request, string $id) {
+        $validated = $request->validated();
+
+        $user = User::find(auth()->user()->id);
+        $organization = $user->getOwnedOrganizations()->where('id', $id)->first();
+
+        if (!$organization) {
+            return response()->json([
+                'message' => 'Organization not found or you do not have permission to add a member to it',
+            ], 404);
+        }
+
+        $ghostUser = User::create(collect($validated)->merge(['global_role' => 'ghost'])->toArray());
+        $organization->users()->attach($ghostUser->id);
+
+        return response()->json([
+            'message' => 'Successfully created Ghost User and added them to Organization',
+            'ghostUser' => $ghostUser,
+        ]);
+    }
+
+    /**
+     * Delete a ghost user that was added as a member to an organization
+     */
+    public function deleteGhostUser(string $id, string $ghostUserId) {
+        $user = User::find(auth()->user()->id);
+
+        $organization = $user->getOwnedOrganizations()->where('id', $id)->first();
+        if (!$organization) {
+            return response()->json([
+                'message' => 'Organization not found or you do not have permission to delete a member from it',
+            ], 404);
+        }
+
+        $ghostUser = $organization->users()->whereUserId($ghostUserId)->first();
+        if (!$ghostUser) {
+            return response()->json([
+                'message' => 'Ghost User not found or you do not have permission to delete them',
+            ], 404);
+        }
+
+        $organization->users()->detach($ghostUser->id);
+        $ghostUser->delete();
+
+        return response()->json([
+            'message' => 'Successfully deleted Ghost User and removed them from Organization',
         ]);
     }
 }

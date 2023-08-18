@@ -5,7 +5,8 @@ namespace App\Http\Services;
 class RequestService
 {
     private array $rules = [
-        'username'                  => ['string', 'unique:users'],
+        'username'                  => ['string', 'unique:users', 'min:5', 'max:255', 'regex:/^[a-zA-Z0-9_.-]*$/'],
+        'nickname'                  => ['string', 'min:5', 'max:255'],
         'first_name'                => ['string'],
         'last_name'                 => ['string'],
         'new_email'                 => ['email', 'unique:users'],
