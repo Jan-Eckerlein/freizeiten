@@ -24,7 +24,7 @@ class Role extends Model
      */
     protected $fillable = [
         'name',
-        'organization_id',
+        'subject_id',
     ];
 
     /**
